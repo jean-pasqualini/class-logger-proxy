@@ -1,0 +1,17 @@
+{
+  "name" : "darkilliant/class-logger-demo",
+  "autoload": {
+    "psr-4": {
+      "App\\" : "./"
+    }
+  },
+  "minimum-stability": "dev",
+  "repositories": [
+    {
+      "packagist.org": false
+    }
+  ],
+  "require": {
+    "php": "7.0.*"
+  }
+}

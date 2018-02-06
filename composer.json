@@ -1,0 +1,21 @@
+{
+    "name": "darkilliant/class-logger",
+    "description": "",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jean Pasqualini",
+            "email": "jpasqualini75@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Darkilliant\\ClassLogger\\": "src/"
+        }
+    },
+    "require": {
+        "php": "7.0.*",
+        "symfony/process": "^3.4"
+    }
+}
