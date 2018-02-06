@@ -7,7 +7,7 @@ $method = $data;
     $arguments = [];
     foreach ($method['parameters'] as $parameter) {
         $argument = sprintf('%s$%s', $parameter['type'], $parameter['name']);
-        $arguments[] = $argument;
+        $arguments[] = $argument.' = null';
     }
     $arguments = implode(', ', $arguments);
 
