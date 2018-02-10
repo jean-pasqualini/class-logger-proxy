@@ -2,20 +2,38 @@
 
 namespace Darkilliant\ClassLogger;
 
+use Symfony\Component\Process\Process;
+
 class ClassReflector
 {
     private function getReflectionClassByFile($class, $file)
     {
-        $realClassPath = '/tmp/real_'.md5($class).'.php';
+        require $file;
 
-        $realClassContent = file_get_contents($file);
-        $realClassName = 'Real\\'.$class;
-        $realClassContent = preg_replace('/namespace ([a-zA-Z]+)/i', 'namespace Real\\\$1', $realClassContent);
+        return new \ReflectionClass($class);
+    }
 
-        file_put_contents($realClassPath, $realClassContent);
-        require $realClassPath;
+    public function getIsolatedStructure($class, $file, $composerAutoloadFile)
+    {
+        $context = [
+            'class' => $class,
+            'file' => $file,
+            'autoload' => $composerAutoloadFile,
+        ];
+        $process = new Process('php '.__DIR__.'/structure.php \''.base64_encode(json_encode($context)).'\'');
+        $process->run();
 
-        return new \ReflectionClass($realClassName);
+        if (!$process->isSuccessful()) {
+            echo $process->getErrorOutput();
+        }
+
+        $structure = json_decode($process->getOutput(), true);
+
+        if (!$structure) {
+            exit('analyse class problem');
+        }
+
+        return $structure;
     }
 
     public function getStructure($class, $file): array
@@ -31,7 +49,7 @@ class ClassReflector
         $data['real_class'] = '\\'.$class->getName();
 
         $data['methods'] = [];
-        $methods = $this->getClassMethods($class->getName());
+        $methods = $this->getClassMethods($class->getName(), $class->getTraits());
         foreach ($methods as $method) {
             $reflMethod = $class->getMethod($method);
             if (!$reflMethod->isPublic() || $reflMethod->isFinal() || $reflMethod->isStatic()) {
@@ -75,13 +93,19 @@ class ClassReflector
         return $data;
     }
 
-    private function getClassMethods($class)
+    private function getClassMethods($class, array $traits)
     {
         $allMethods = get_class_methods($class);
 
         $classParent = get_parent_class($class);
 
         $methodsInherited = ($classParent) ? get_class_methods($classParent) : [];
+
+        foreach ($traits as $trait) {
+            /** @var \ReflectionClass $trait */
+            $methodsTrait = get_class_methods($trait->getName());
+            array_push($methodsInherited, ...$methodsTrait);
+        }
 
         $methods = [];
 

@@ -4,6 +4,8 @@ namespace App\Entity;
 
 class Article extends AbstractEntityObject
 {
+    use UuidTrait;
+
     private $name;
 
     /**
