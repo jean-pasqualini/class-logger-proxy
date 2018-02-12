@@ -25,6 +25,11 @@ class ClassProxyLoader
         return $this->path.'/proxy_'.md5($class).'.php';
     }
 
+    public function exists($class)
+    {
+        return file_exists($this->getProxyPath($class));
+    }
+
     public function load($class, $originalFile)
     {
         $originalDirectory = pathinfo($originalFile, PATHINFO_DIRNAME);
@@ -43,6 +48,11 @@ class ClassProxyLoader
         }
 
         return false;
+    }
+
+    public function dump($class, $content)
+    {
+        file_put_contents($this->getProxyPath($class), $content);
     }
 
     public function __destruct()

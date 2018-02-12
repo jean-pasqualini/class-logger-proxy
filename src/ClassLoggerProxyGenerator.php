@@ -13,7 +13,7 @@ class ClassLoggerProxyGenerator
         // Find class
         foreach ($phpContent as $lineNumber => $line) {
             if (preg_match('/class [a-zA-Z+]/i', $line)) {
-                $phpContent[$lineNumber+2] = "\t".'use \Darkilliant\ClassLogger\TraitLoggerProxy;'.PHP_EOL.$phpContent[$lineNumber+2];
+                $phpContent[$lineNumber+2] = "    ".'use \Darkilliant\ClassLogger\TraitLoggerProxy;'.PHP_EOL.$phpContent[$lineNumber+2];
                 break;
             }
         }
