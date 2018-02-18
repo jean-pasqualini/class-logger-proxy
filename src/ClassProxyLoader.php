@@ -9,15 +9,19 @@
 namespace Darkilliant\ClassLogger;
 
 
+use Psr\Log\LoggerInterface;
+
 class ClassProxyLoader
 {
     private $path;
+    private $logger;
 
     private $tobeDelete = [];
 
-    public function __construct(string $path)
+    public function __construct(string $path, LoggerInterface $logger)
     {
         $this->path = $path;
+        $this->logger = $logger;
     }
 
     public function getProxyPath($class)
@@ -38,12 +42,11 @@ class ClassProxyLoader
         $tmpProxyClassPath = $originalDirectory.'/.proxy_'.md5($class).'.php';
 
         if (file_exists($proxyClassPath)) {
-
             copy($proxyClassPath, $tmpProxyClassPath);
             require $tmpProxyClassPath;
             $this->tobeDelete[] = $tmpProxyClassPath;
 
-            call_user_func_array([$class, '_proxy_setLogger'], [new Logger()]);
+            call_user_func_array([$class, '_proxy_setLogger'], [$this->logger]);
             return true;
         }
 

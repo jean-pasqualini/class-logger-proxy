@@ -6,12 +6,8 @@
     }
   },
   "minimum-stability": "dev",
-  "repositories": [
-    {
-      "packagist.org": false
-    }
-  ],
   "require": {
-    "php": "7.0.*"
+    "php": "7.0.*",
+    "monolog/monolog": "1.9.*"
   }
 }
