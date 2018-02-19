@@ -2,6 +2,8 @@
 
 namespace Darkilliant\ClassLogger;
 
+use Psr\Log\LogLevel;
+
 trait TraitLoggerProxy
 {
     private static $_proxy_logger;
@@ -33,9 +35,9 @@ trait TraitLoggerProxy
         $args = array_map([$this, '_proxy_dumpScalar'], $arguments);
         $method = $name.'('.implode($args, ', ').')';
 
-        self::$_proxy_logger->log('INFO.class', '{class}::{method}', [
-            '{class}' => get_class($this),
-            '{method}' => $method,
+        self::$_proxy_logger->log(LogLevel::INFO, '{class}::{method}', [
+            'class' => get_class($this),
+            'method' => $method,
         ]);
     }
 
@@ -44,10 +46,10 @@ trait TraitLoggerProxy
         $args = array_map([$this, '_proxy_dumpScalar'], $arguments);
         $method = $name.'('.implode($args, ', ').')';
 
-        self::$_proxy_logger->log('INFO.class', '{class}::{method} '.PHP_EOL."\t > {return}", [
-            '{class}' => get_class($this),
-            '{method}' => $method,
-            '{return}' => $this->_proxy_dumpScalar($returnValue),
+        self::$_proxy_logger->log(LogLevel::INFO, '{class}::{method} '.PHP_EOL."\t > {return}", [
+            'class' => get_class($this),
+            'method' => $method,
+            'return' => $this->_proxy_dumpScalar($returnValue),
         ]);
     }
 }
