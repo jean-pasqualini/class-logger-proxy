@@ -95,23 +95,17 @@ class ClassReflector
 
     private function getClassMethods($class, array $traits)
     {
-        $allMethods = get_class_methods($class);
-
-        $classParent = get_parent_class($class);
-
-        $methodsInherited = ($classParent) ? get_class_methods($classParent) : [];
-
-        foreach ($traits as $trait) {
-            /** @var \ReflectionClass $trait */
-            $methodsTrait = get_class_methods($trait->getName());
-            array_push($methodsInherited, ...$methodsTrait);
-        }
-
         $methods = [];
 
-        foreach ($allMethods as $method) {
-            if (!in_array($method, $methodsInherited)) {
-                $methods[] = $method;
+        $reflectionClass = new \ReflectionClass($class);
+        $reflectionMethods = $reflectionClass->getMethods();
+
+        foreach ($reflectionMethods as $reflectionMethod) {
+            if (!$reflectionMethod->isPublic() || $reflectionMethod->isFinal() || $reflectionMethod->isStatic()) {
+                continue;
+            }
+            if ($reflectionMethod->getDeclaringClass()->getName() === $class) {
+                $methods[] = $reflectionMethod->getName();
             }
         }
 
